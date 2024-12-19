@@ -1,0 +1,382 @@
+{% extends "base.html" %} {% block title %}Khách hàng{% endblock %} {% set
+menu_item = 'ttcb' %} {% set active_page = 'customer' %} {% block content %}
+<h4 class="fw-bold py-3 mb-4">
+  <span class="text-muted fw-light">Thông tin cơ bản /</span>
+  Khách hàng
+</h4>
+<div class="d-flex justify-content-end">
+  <button
+    type="button"
+    class="btn btn-primary me-2"
+    data-bs-toggle="modal"
+    data-bs-target="#new-customer"
+  >
+    <i class="bx bx-plus-medical bx-sd me-1"></i>Thêm khách hàng
+  </button>
+  <div class="btn-group">
+    <button
+      type="button"
+      class="btn btn-outline-primary dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-expanded="true"
+    >
+      <i class="bx bxs-file-export bx-sd me-1"></i>Xuất file
+    </button>
+    <ul
+      class="dropdown-menu"
+      data-popper-placement="bottom-start"
+      style="
+        position: absolute;
+        inset: 0px auto auto 0px;
+        margin: 0px;
+        transform: translate(0px, 40px);
+      "
+    >
+      <li>
+        <a class="dropdown-item" href="javascript:void(0);"
+          ><i class="bx bxs-file-pdf bx-sd me-1"></i>.csv</a
+        >
+      </li>
+      <li>
+        <a class="dropdown-item" href="javascript:void(0);"
+          ><i class="bx bxs-file-pdf bx-sd me-1"></i>.pdf</a
+        >
+      </li>
+      <li>
+        <a class="dropdown-item" href="javascript:void(0);"
+          ><i class="bx bxs-copy bx-sd me-1"></i>copy</a
+        >
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="table-responsive">
+  <table id="dataTable" class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tên khách hàng</th>
+        <th>Địa chỉ</th>
+        <th>SĐT</th>
+        <th>CCCD</th>
+        <th>Email</th>
+        <th>Ngày sinh</th>
+        <th>Ghi chú</th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody id="body-table" class="table-border-bottom-0">
+      {% for customer in customer_list %}
+      <tr class="table-light">
+        <th>{{customer.id}}</th>
+        <th>{{customer.name}}</th>
+        <th>{{customer.address}}</th>
+        <th>{{customer.phone}}</th>
+        <th>{{customer.cccd}}</th>
+        <th>{{customer.email}}</th>
+        <th>{{customer.dob}}</th>
+        <th>{{customer.note}}</th>
+        <th>
+          <span
+            data-bs-toggle="modal"
+            data-bs-target="#edit-customer"
+            onclick="editCustomer({{customer}})"
+          >
+            <a
+              href="#"
+              data-bs-toggle="tooltip"
+              data-bs-offset="0,4"
+              data-bs-placement="right"
+              data-bs-html="true"
+              data-bs-original-title="<span>Sửa</span>"
+              ><i class="bx bx-edit bx-md"></i
+            ></a>
+          </span>
+          <span onclick="deleteCustomer({{customer.id}})">
+            <a
+              href="#"
+              data-bs-toggle="tooltip"
+              data-bs-offset="0,4"
+              data-bs-placement="right"
+              data-bs-html="true"
+              data-bs-original-title="<span>Xoá</span>"
+              ><i class="bx bx-message-square-x bx-md"></i
+            ></a>
+          </span>
+        </th>
+      </tr>
+      {%endfor%}
+    </tbody>
+  </table>
+</div>
+{% endblock %} {% block modal %}
+<div
+  class="modal fade"
+  id="new-customer"
+  data-bs-backdrop="static"
+  tabindex="-1"
+  style="display: none"
+  aria-modal="true"
+  role="dialog"
+>
+  <div class="modal-dialog">
+    <form method="POST" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="new-customer-title">Thêm khách hàng mới</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <input
+          type="hidden"
+          name="form_id"
+          class="form-control"
+          value="form-add"
+        />
+        <div class="row">
+          <div class="col mb-3">
+            <label for="name" class="form-label">Tên khách hàng</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="form-control"
+              placeholder="Nhập tên khách hàng..."
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-3">
+            <label for="address" class="form-label">Địa chỉ</label>
+            <input
+              type="text"
+              id="address"
+              name="address"
+              class="form-control"
+              placeholder="Nhập địa chỉ của khách hàng..."
+            />
+          </div>
+        </div>
+        <div class="row g-2">
+          <div class="col mb-3">
+            <label for="phone" class="form-label">Số điện thoại</label>
+            <div class="input-group input-group-merge">
+              <span class="input-group-text">VN (+84)</span>
+              <input
+                type="text"
+                id="phone"
+                name="phone"
+                class="form-control"
+                placeholder="912 345 678"
+              />
+            </div>
+          </div>
+          <div class="col mb-3">
+            <label for="cccd" class="form-label">Căn cước công dân</label>
+            <input
+              type="text"
+              id="cccd"
+              name="cccd"
+              class="form-control"
+              placeholder="000 000 000 000"
+            />
+          </div>
+        </div>
+        <div class="row g-2">
+          <div class="col mb-0">
+            <label for="email" class="form-label">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-control"
+              placeholder="xxxx@xxx.xx"
+            />
+          </div>
+          <div class="col mb-3">
+            <label for="dob" class="form-label">Ngày sinh</label>
+            <input
+              type="date"
+              id="dob"
+              name="dob"
+              class="form-control"
+              placeholder="Ngày / Tháng / Năm"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-3">
+            <label for="note" class="form-label">Ghi chú</label>
+            <input
+              type="text"
+              id="note"
+              name="note"
+              class="form-control"
+              placeholder=""
+            />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          data-bs-dismiss="modal"
+        >
+          Huỷ
+        </button>
+        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+          Lưu
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="edit-customer"
+  data-bs-backdrop="static"
+  tabindex="-1"
+  style="display: none"
+  aria-modal="true"
+  role="dialog"
+>
+  <div class="modal-dialog">
+    <form method="POST" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="edit-customer-title">
+          Chỉnh sửa thông tin khách hàng
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <input
+          type="hidden"
+          name="form_id"
+          class="form-control"
+          value="form-edit"
+        />
+        <input
+          type="hidden"
+          id="edit-id"
+          name="edit-id"
+          class="form-control"
+          value=""
+        />
+        <div class="row">
+          <div class="col mb-3">
+            <label for="edit-name" class="form-label">Tên khách hàng</label>
+            <input
+              type="text"
+              id="edit-name"
+              name="edit-name"
+              class="form-control"
+              placeholder="Nhập tên khách hàng..."
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-3">
+            <label for="edit-address" class="form-label">Địa chỉ</label>
+            <input
+              type="text"
+              id="edit-address"
+              name="edit-address"
+              class="form-control"
+              placeholder="Nhập địa chỉ của khách hàng..."
+            />
+          </div>
+        </div>
+        <div class="row g-2">
+          <div class="col mb-3">
+            <label for="edit-phone" class="form-label">Số điện thoại</label>
+            <div class="input-group input-group-merge">
+              <span class="input-group-text">VN (+84)</span>
+              <input
+                type="text"
+                id="edit-phone"
+                name="edit-phone"
+                class="form-control"
+                placeholder="912 345 678"
+              />
+            </div>
+          </div>
+          <div class="col mb-3">
+            <label for="edit-cccd" class="form-label">Căn cước công dân</label>
+            <input
+              type="text"
+              id="edit-cccd"
+              name="edit-cccd"
+              class="form-control"
+              placeholder="000 000 000 000"
+            />
+          </div>
+        </div>
+        <div class="row g-2">
+          <div class="col mb-0">
+            <label for="edit-email" class="form-label">Email</label>
+            <input
+              type="email"
+              id="edit-email"
+              name="edit-email"
+              class="form-control"
+              placeholder="xxxx@xxx.xx"
+            />
+          </div>
+          <div class="col mb-3">
+            <label for="edit-dob" class="form-label">Ngày sinh</label>
+            <input
+              type="date"
+              id="edit-dob"
+              name="edit-dob"
+              class="form-control"
+              placeholder="Ngày / Tháng / Năm"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-3">
+            <label for="edit-note" class="form-label">Ghi chú</label>
+            <input
+              type="text"
+              id="edit-note"
+              name="edit-note"
+              class="form-control"
+              placeholder=""
+            />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          data-bs-dismiss="modal"
+        >
+          Huỷ
+        </button>
+        <button type="submit" class="btn btn-primary">Lưu</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %} {% block customjs %}
+<script
+  type="text/javascript"
+  src="{{ url_for('static',filename='js/dataTable.js') }}"
+></script>
+<script
+  type="text/javascript"
+  src="{{ url_for('static',filename='js/customer.js') }}"
+></script>
+{% endblock %}
