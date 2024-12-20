@@ -5,13 +5,18 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
   Báo cáo giờ
 </h4>
 <div class="d-flex justify-content-end">
-  <div class="col-xl-2">
+  <button class="btn btn-outline-secondary btn-xs" onclick="lastDay()">
+    <i class="bx bx-chevron-left"></i>
+  </button>
+  <div class="col-xl-2" style="border-color: #696cff">
     <input class="form-control" type="date" id="dateInput" value="{{ddate}}" />
   </div>
+  <button class="btn btn-outline-secondary btn-xs" onclick="nextDay()">
+    <i class="bx bx-chevron-right"></i>
+  </button>
 </div>
-{% if render_table == 2 %}
 <div class="table-responsive">
-  <h5 class="card-header">Báo cáo 11h30</h5>
+  <h5 class="card-header text-center">Báo cáo 11h30</h5>
   <table id="dataTable1" class="table table-striped">
     <thead>
       <tr>
@@ -31,10 +36,10 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
         <th>{{staff.name}}</th>
         <th>{{report.cost}} VND</th>
         <th>{{report.phoneNumber}}</th>
-        <th>{{ report.costPerPhone }} VND</th>
+        <th>{{report.costPerPhone}} VND</th>
         <th>{{report.revenue}} VND</th>
-        <th>{{ report.cpqc }}%</th>
-        <th>{{ report.roat }}</th>
+        <th>{{report.cpqc}}%</th>
+        <th>{{report.roat}}</th>
       </tr>
       {%endif%} {%endfor%} {%endfor%}
     </tbody>
@@ -51,6 +56,7 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
     </tfoot>
   </table>
 </div>
+{% if render_table == 2 %}
 <div class="d-flex justify-content-end">
   <button
     data-bs-toggle="modal"
@@ -60,9 +66,9 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
     Báo cáo
   </button>
 </div>
-{% endif %} {% if render_table >=1 %}
+{% endif %}
 <div class="table-responsive">
-  <h5 class="card-header">Báo cáo 17h00</h5>
+  <h5 class="card-header text-center">Báo cáo 17h00</h5>
   <table id="dataTable2" class="table table-striped">
     <thead>
       <tr>
@@ -102,6 +108,7 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
     </tfoot>
   </table>
 </div>
+{% if render_table >=1 %}
 <div class="d-flex justify-content-end">
   <button
     data-bs-toggle="modal"
@@ -149,7 +156,13 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
           <div class="col mb-3">
             <label class="form-label">Chi phí</label>
             <div class="input-group input-group-merge">
-              <input type="text" id="cost" name="cost" class="form-control" />
+              <input
+                type="number"
+                id="cost"
+                name="cost"
+                class="form-control"
+                min="0"
+              />
               <span class="input-group-text">VND</span>
             </div>
           </div>
@@ -159,10 +172,11 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
             <label class="form-label">Số điện thoại</label>
             <div class="input-group input-group-merge">
               <input
-                type="text"
+                type="number"
                 id="phoneNumber"
                 name="phoneNumber"
                 class="form-control"
+                min="0"
               />
             </div>
           </div>
@@ -172,10 +186,11 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
             <label class="form-label">Doanh số</label>
             <div class="input-group input-group-merge">
               <input
-                type="text"
+                type="number"
                 id="revenue"
                 name="revenue"
                 class="form-control"
+                min="0"
               />
               <span class="input-group-text">VND</span>
             </div>
@@ -235,7 +250,13 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
           <div class="col mb-3">
             <label class="form-label">Chi phí</label>
             <div class="input-group input-group-merge">
-              <input type="text" id="cost" name="cost" class="form-control" />
+              <input
+                type="number"
+                id="cost"
+                name="cost"
+                class="form-control"
+                min="0"
+              />
               <span class="input-group-text">VND</span>
             </div>
           </div>
@@ -245,10 +266,11 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
             <label class="form-label">Số điện thoại</label>
             <div class="input-group input-group-merge">
               <input
-                type="text"
+                type="number"
                 id="phoneNumber"
                 name="phoneNumber"
                 class="form-control"
+                min="0"
               />
             </div>
           </div>
@@ -258,10 +280,11 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
             <label class="form-label">Doanh số</label>
             <div class="input-group input-group-merge">
               <input
-                type="text"
+                type="number"
                 id="revenue"
                 name="revenue"
                 class="form-control"
+                min="0"
               />
               <span class="input-group-text">VND</span>
             </div>
