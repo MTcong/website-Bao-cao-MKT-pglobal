@@ -252,10 +252,10 @@ def bao_cao_gio(y, m, d):
 def bcbtest():
     today = date.today()
     one_month_before = today - relativedelta(months=1)
-    return redirect(url_for(f'views.bao_cao_bai_test', yb=one_month_before.year, mb=one_month_before.month, dbb=one_month_before.day, y=today.year, m=today.month, d=today.day))
+    return redirect(url_for(f'views.bao_cao_gio', yb=one_month_before.year, mb=one_month_before.month, dbb=one_month_before.day, y=today.year, m=today.month, d=today.day))
 
 
-@views.route('/bao-cao-bai-test/<int:yb>-<int:mb>-<int:dbb>-<int:y>-<int:m>-<int:d>', methods=['GET', 'POST'])
+@views.route('/bao-cao-bai-test/<int:yb>-<int:mb>-<int:db>-<int:y>-<int:m>-<int:d>', methods=['GET', 'POST'])
 @login_required
 def bao_cao_bai_test(yb, mb, dbb, y, m, d):
     date1 = datetime.strptime(f'{yb}-{mb}-{dbb}', '%Y-%m-%d').date()
@@ -307,11 +307,11 @@ def bao_cao_bai_test(yb, mb, dbb, y, m, d):
             'cpc': post.cpc,
             'ctr': post.ctr,
             'cpa': post.cpa,
-            'cpPerCpa': post.cpPerCpa,
+            'cpPerCpa': f'{int(round(post.budget/post.cpa, 0) if post.cpa != 0 else 0):,}',
             'order': post.order,
-            'cpPerOrder': post.cpPerOrder,
+            'cpPerOrder': f'{int(round(post.budget/post.order, 0) if post.order != 0 else 0):,}',
             'review': post.review,
         }
         post_list.append(post_data)
 
-    return render_template('bao-cao-bai-test.html', user=current_user, staff_list=staff_list, post_list=post_list, date1=date1, date2=date2)
+    return render_template('bao-cao-bai-test.html', user=current_user, staff_list=staff_list, post_list=post_list)

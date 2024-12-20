@@ -5,6 +5,11 @@ from flask_login import LoginManager
 from datetime import date
 from werkzeug.security import generate_password_hash
 from faker import Faker
+import pytz
+
+
+TIMEZONE = 'Asia/Ho_Chi_Minh'
+tz = pytz.timezone(TIMEZONE)
 
 
 db = SQLAlchemy()
@@ -13,7 +18,7 @@ DB_NAME = "database.db"
 
 def create_app():
     app = Flask("__name__", template_folder='website/templates', static_folder='website/static')
-    app.config['SECRET_KEY'] = 'ajjflajfoc oaenakjcap'
+    app.config['SECRET_KEY'] = 'jfpamcoakr ncldprnkea'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     db.init_app(app)
 
@@ -23,7 +28,7 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
-    from .models import User, Customer, Bank, Supplier, Unit, Ingredient
+    from .models import User, Bank, Post
 
     with app.app_context():
         db.create_all()
@@ -31,11 +36,8 @@ def create_app():
         try:
             User.create_admin()
             User.create_random_staffs()
-            Customer.create_random_customers()
             Bank.create_bank_data()
-            Supplier.create_random_suppliers()
-            Unit.create_units()
-            Ingredient.create_ingredients()
+            Post.create_random_post()
         except Exception as e:
             print(f'Exception: {e}')
 

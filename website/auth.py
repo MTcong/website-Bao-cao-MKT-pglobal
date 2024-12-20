@@ -13,8 +13,6 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
 
-
-
         user = User.query.filter_by(email=email).first()
         if user:
             if check_password_hash(user.password, password):
@@ -28,35 +26,9 @@ def login():
 
     return render_template('login.html', user=current_user)
 
+
 @auth.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
-
-@auth.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        password1 = request.form.get('password1')
-        password2 = request.form.get('password2')
-
-        user = User.query.filter_by(email=email).first()
-        if user:
-            flash("Địa chỉ email này đã đăng ký tài khoản!", category='error')
-            return redirect(url_for('auth.register'))
-
-        if password1 != password2:
-            flash("Xác nhận mật khẩu không thành công. Vui lòng thử lại!", category='error')
-        elif len(password1) < 8:
-            flash("Mật khẩu phải dài hơn 8 kí tự!", category='error')
-        else:
-            new_user = User(email=email, name=name, password=generate_password_hash(password1))
-            db.session.add(new_user)
-            db.session.commit()
-            login_user(new_user, remember=True)
-            flash("Tạo tài khoản thành công!", category='success')
-            return redirect(url_for('views.home'))
-
-    return render_template('register.html', user=current_user)

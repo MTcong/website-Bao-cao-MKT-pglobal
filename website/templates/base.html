@@ -20,7 +20,7 @@
     <link
       rel="icon"
       type="image/x-icon"
-      href="../static/sneat/assets/img/favicon/logo.png"
+      href="../static/sneat/assets/img/favicon/favicon.ico"
     />
 
     <!-- Fonts -->
@@ -94,12 +94,9 @@
               <span class="app-brand-logo demo">
                 <img
                   src="../static/sneat/assets/img/favicon/logo.png"
-                  style="max-width: 50px; max-height: 50px"
+                  style="max-width: 180px; max-height: 180px"
                 />
               </span>
-              <span class="app-brand-text demo menu-text fw-bolder ms-2"
-                >PLC</span
-              >
             </a>
 
             <a
@@ -121,35 +118,49 @@
               </a>
             </li>
 
-            <!-- Thông Tin Cơ Bản -->
-            <li class="menu-item {{'active open' if menu_item == 'ttcb' }}">
+            <!-- Báo cáo -->
+            <li class="menu-item {{'active open' if menu_item == 'baocao' }}">
               <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-bar-chart-alt-2"></i>
-                <div>Thông Tin Cơ Bản</div>
+                <div>Báo cáo</div>
               </a>
 
               <ul class="menu-sub">
-                <li
-                  class="menu-item {{'active' if active_page == 'supplier' }}"
-                >
-                  <a href="/supplier" class="menu-link">
-                    <div>Nhà cung cấp</div>
+                <li class="menu-item {{'active' if active_page == 'bcgio' }}">
+                  <a href="/bao-cao-gio" class="menu-link">
+                    <div>Báo cáo giờ</div>
                   </a>
                 </li>
-                <li
-                  class="menu-item {{'active' if active_page == 'customer' }}"
-                >
-                  <a href="/customer" class="menu-link">
-                    <div>Khách hàng</div>
+                <li class="menu-item {{'active' if active_page == 'bcngay' }}">
+                  <a href="/bao-cao-ngay" class="menu-link">
+                    <div>Báo cáo ngày</div>
                   </a>
                 </li>
-                {% if user.role == "admin" %}
+                <li class="menu-item {{'active' if active_page == 'bcthang' }}">
+                  <a href="/bao-cao-thang" class="menu-link">
+                    <div>Báo cáo tháng</div>
+                  </a>
+                </li>
+                <li class="menu-item {{'active' if active_page == 'bcbtest' }}">
+                  <a href="/bao-cao-bai-test" class="menu-link">
+                    <div>Báo cáo bài test</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
+
+            {% if user.role == "admin" %}
+            <li class="menu-item {{'active open' if menu_item == 'ttcb' }}">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                <div>Thông tin cơ bản</div>
+              </a>
+              <ul class="menu-sub">
                 <li class="menu-item {{'active' if active_page == 'staff' }}">
                   <a href="/staff" class="menu-link">
                     <div>Nhân viên</div>
                   </a>
                 </li>
-                {% endif %}
                 <li class="menu-item {{'active' if active_page == 'bank' }}">
                   <a href="/bank" class="menu-link">
                     <div>Ngân hàng</div>
@@ -157,111 +168,8 @@
                 </li>
               </ul>
             </li>
+            {% endif %}
 
-            <li class="menu-item {{'active open' if menu_item == 'vat-lieu' }}">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-dock-top"></i>
-                <div>Vật liệu</div>
-              </a>
-              <ul class="menu-sub">
-                <li
-                  class="menu-item {{'active' if active_page == 'ingredient' }}"
-                >
-                  <a href="/ingredient" class="menu-link">
-                    <div>Nguyên liệu</div>
-                  </a>
-                </li>
-                <li
-                  class="menu-item {{'active' if active_page == 'thanh-pham' }}"
-                >
-                  <a href="/thanh-pham" class="menu-link">
-                    <div>Thành phẩm</div>
-                  </a>
-                </li>
-                <li class="menu-item {{'active' if active_page == 'unit' }}">
-                  <a href="/unit" class="menu-link">
-                    <div>Đơn vị</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-
-            <li class="menu-item {{'active open' if menu_item == 'dvgh' }}">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-package"></i>
-                <div>Đặt và giao hàng</div>
-              </a>
-              <ul class="menu-sub">
-                <li
-                  class="menu-item {{'active' if active_page == 'don-hang-nhap' }}"
-                >
-                  <a href="/don-hang-nhap" class="menu-link">
-                    <div>Đơn hàng nhập</div>
-                  </a>
-                </li>
-                <li
-                  class="menu-item {{'active' if active_page == 'don-hang-xuat' }}"
-                >
-                  <a href="/don-hang-xuat" class="menu-link">
-                    <div>Đơn hàng xuất</div>
-                  </a>
-                </li>
-                <li
-                  class="menu-item {{'active' if active_page == 'nhap-giao-hang' }}"
-                >
-                  <a href="/nhap-giao-hang" class="menu-link">
-                    <div>Nhập giao hàng</div>
-                  </a>
-                </li>
-                <li
-                  class="menu-item {{'active' if active_page == 'xuat-giao-hang' }}"
-                >
-                  <a href="/xuat-giao-hang" class="menu-link">
-                    <div>Xuất giao hàng</div>
-                  </a>
-                </li>
-                <li
-                  class="menu-item {{'active' if active_page == 'hoa-don-ban-hang' }}"
-                >
-                  <a href="/hoa-don-ban-hang" class="menu-link">
-                    <div>Hoá đơn bán hàng</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-
-            <li class="menu-item {{'active' if menu_item == 'qltc' }}">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-wallet"></i>
-                <div>Quản lí thu chi</div>
-              </a>
-              <!-- <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="/don-hang-nhap" class="menu-link">
-                    <div>Đơn hàng nhập</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="/don-hang-xuat" class="menu-link">
-                    <div>Đơn hàng xuất</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="/nhap-giao-hang" class="menu-link">
-                    <div>Nhập giao hàng</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="/xuat-giao-hang" class="menu-link">
-                    <div>Xuất giao hàng</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="/hoa-don-ban-hang" class="menu-link">
-                    <div>Hoá đơn bán hàng</div>
-                  </a>
-                </li>
-              </ul> -->
             </li>
           </ul>
         </aside>
@@ -338,7 +246,7 @@
                               >{{ user.name }}</span
                             >
                             <small class="text-muted"
-                              >{{ user.role.upper() }}</small
+                              >{% if user.role == 'admin' %}Quản lý{% else %}Nhân viên{% endif %}</small
                             >
                           </div>
                         </div>
