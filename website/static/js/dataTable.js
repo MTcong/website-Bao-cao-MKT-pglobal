@@ -73,25 +73,22 @@ function exportTableToCSV(filename) {
     let csv = [];
     let rows = table.rows({ search: 'applied' }).data();
 
-    // Add table header (excluding the last column)
     let headers = [];
     $('#dataTable thead th').each(function (index) {
-        if (index < $('#dataTable thead th').length - 1) { // Exclude the last column
+        if (index < $('#dataTable thead th').length - 1) {
             headers.push($(this).text());
         }
     });
     csv.push(headers.join(","));
 
-    // Add table rows (excluding the last column)
     rows.each(function (row) {
         let rowData = [];
-        for (let i = 0; i < row.length - 1; i++) { // Exclude the last column
+        for (let i = 0; i < row.length - 1; i++) {
             rowData.push(row[i]);
         }
         csv.push(rowData.join(","));
     });
 
-    // Convert the CSV string to a Blob with UTF-8 encoding
     let csvString = csv.join("\n");
     let blob = new Blob(["\ufeff" + csvString], { type: 'text/csv;charset=utf-8;' });
     let link = document.createElement("a");
@@ -107,53 +104,73 @@ function exportTableToCSV(filename) {
 }
 
 
-$('#pdfButton').click(function () {
-    exportTableToPDF('data.pdf');
+$('#excelButton').click(function () {
+    exportTableToExcel('data.xlsx');
 });
 
 
-function exportTableToPDF(filename) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-  
-    const fontBase64 = 'YOUR_BASE64_ENCODED_FONT_HERE'; // Replace with your base64-encoded font data
+function exportTableToExcel(filename) {
+    let rows = table.rows({ search: 'applied' }).data();
 
-    doc.addFileToVFS('Roboto-Regular.ttf', fontBase64);
-    doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-    doc.setFont('Roboto'); // Set the custom font for the PDF
+    let headers = [];
+    $('#dataTable thead th').each(function (index) {
+        if (index < $('#dataTable thead th').length - 1) {
+            headers.push($(this).text());
+        }
+    });
 
-    // Fetch headers from the <thead>
-    const headers = [];
-    $('#dataTable thead th').each(function () {
-      headers.push($(this).text()); // Get the text from each <th> in the header
-    });
-    headers.pop();
+    let data = [];
+    data.push(headers);
 
-    // Fetch data from the table
-    const tableData = [];
-    $('#dataTable tbody tr').each(function () {
-      const rowData = [];
-      $(this).find('th').each(function () {
-        rowData.push($(this).text()); // Extract the text from each cell
-      });
-      rowData.pop();
-      tableData.push(rowData);
+    rows.each(function (row) {
+        let rowData = [];
+        for (let i = 0; i < row.length - 1; i++) {
+            rowData.push(row[i]);
+        }
+        data.push(rowData);
     });
-  
-    // Customize PDF settings and table structure
-    doc.autoTable({
-      head: [headers],  // Use the extracted headers from <thead>
-      body: tableData,  // Table data
-      theme: 'striped', // Optional theme for the table
-      styles: {
-        font: 'Roboto-Regular', // Use Helvetica font
-        fontSize: 12, // Font size for the table
-        cellPadding: 3, // Padding in cells
-      }
-    });
-  
-    // Save the generated PDF with the provided filename
-    doc.save(filename);
+
+    let ws = XLSX.utils.aoa_to_sheet(data);
+
+    let wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+    XLSX.writeFile(wb, filename);
 }
-  
+
+
+$('#copyButton').click(function () {
+    copyTableToClipboard();
+});
+
+
+function copyTableToClipboard() {
+    let rows = table.rows({ search: 'applied' }).data();
+
+    let headers = [];
+    $('#dataTable thead th').each(function (index) {
+        if (index < $('#dataTable thead th').length - 1) {
+            headers.push($(this).text());
+        }
+    });
+
+    let data = [];
+    data.push(headers);
+
+    rows.each(function (row) {
+        let rowData = [];
+        for (let i = 0; i < row.length - 1; i++) {
+            rowData.push(row[i]);
+        }
+        data.push(rowData);
+    });
+
+    let clipboardText = data.map(row => row.join("\t")).join("\n");
+
+    navigator.clipboard.writeText(clipboardText).then(() => {
+        alert("Copy thành công!");
+    }).catch(err => {
+        console.error("Failed to copy table data: ", err);
+    });
+}
   

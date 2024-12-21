@@ -64,6 +64,7 @@
     <!-- Page CSS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.14/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
 
     <!-- DataTables -->
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -312,6 +313,7 @@
               <div
                 class="alert alert-danger alert-dismissible text-black"
                 role="alert"
+                id="flash-error"
               >
                 {{message}}
                 <button
@@ -325,6 +327,7 @@
               <div
                 class="alert alert-success alert-dismissible text-black"
                 role="alert"
+                id="flash-success"
               >
                 {{message}}
                 <button
