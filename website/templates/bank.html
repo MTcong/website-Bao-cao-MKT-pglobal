@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block title %}Ngân hàng{% endblock %} {% set
-menu_item = 'ttcb' %} {% set active_page = 'bank' %} {% block content %}
-<h4 class="fw-bold py-3 mb-4">
-  <span class="text-muted fw-light">Thông tin cơ bản /</span>
+menu_item = 'ql' %} {% set active_page = 'bank' %} {% block content %}
+<h4 class="fw-bold py-3 mb-4" id="page-title">
+  <span class="text-muted fw-light">Quản lý /</span>
   Ngân Hàng
 </h4>
 <div class="d-flex justify-content-end">
@@ -32,19 +32,24 @@ menu_item = 'ttcb' %} {% set active_page = 'bank' %} {% block content %}
         transform: translate(0px, 40px);
       "
     >
+    <li>
+      <a class="dropdown-item" href="javascript:void(0);" id="printButton"
+        ><i class="bx bxs-printer bx-sd me-2"></i>Print</a
+      >
+    </li>
       <li>
-        <a class="dropdown-item" href="javascript:void(0);"
-          ><i class="bx bxs-file-pdf bx-sd me-1"></i>.csv</a
+        <a class="dropdown-item" href="javascript:void(0);" id="csvButton"
+          ><i class="bx bxs-file-pdf bx-sd me-2"></i>.csv</a
+        >
+      </li>
+      <li>
+        <a class="dropdown-item" href="javascript:void(0);" id="pdfButton"
+          ><i class="bx bxs-file-pdf bx-sd me-2"></i>.pdf</a
         >
       </li>
       <li>
         <a class="dropdown-item" href="javascript:void(0);"
-          ><i class="bx bxs-file-pdf bx-sd me-1"></i>.pdf</a
-        >
-      </li>
-      <li>
-        <a class="dropdown-item" href="javascript:void(0);"
-          ><i class="bx bxs-copy bx-sd me-1"></i>copy</a
+          ><i class="bx bxs-copy bx-sd me-2"></i>copy</a
         >
       </li>
     </ul>
@@ -81,32 +86,31 @@ menu_item = 'ttcb' %} {% set active_page = 'bank' %} {% block content %}
         <th>{{bank.bin}}</th>
         <th>{{bank.swift_code}}</th>
         <th>
-          <span
-            data-bs-toggle="modal"
+          <div class="dropdown">
+            <button
+              type="button"
+              class="btn p-0 dropdown-toggle hide-arrow"
+              data-bs-toggle="dropdown"
+            >
+              <i class="bx bx-dots-vertical-rounded"></i>
+            </button>
+            <div class="dropdown-menu">
+              <a
+                class="dropdown-item"
+                href="javascript:void(0);"
+                data-bs-toggle="modal"
             data-bs-target="#edit-bank"
             onclick="editBank({{bank}})"
-          >
-            <a
-              href="#"
-              data-bs-toggle="tooltip"
-              data-bs-offset="0,4"
-              data-bs-placement="right"
-              data-bs-html="true"
-              data-bs-original-title="<span>Sửa</span>"
-              ><i class="bx bx-edit bx-md"></i
-            ></a>
-          </span>
-          <span onclick="deleteBank({{bank.id}})">
-            <a
-              href="#"
-              data-bs-toggle="tooltip"
-              data-bs-offset="0,4"
-              data-bs-placement="right"
-              data-bs-html="true"
-              data-bs-original-title="<span>Xoá</span>"
-              ><i class="bx bx-message-square-x bx-md"></i
-            ></a>
-          </span>
+                ><i class="bx bx-edit-alt me-1"></i> Sửa</a
+              >
+              <a
+                class="dropdown-item"
+                href="javascript:void(0);"
+                onclick="deleteBank({{bank.id}})"
+                ><i class="bx bx-trash me-1"></i> Xoá</a
+              >
+            </div>
+          </div>
         </th>
       </tr>
       {%endfor%}

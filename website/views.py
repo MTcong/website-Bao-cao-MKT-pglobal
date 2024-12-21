@@ -260,92 +260,92 @@ def bcbtest():
 @views.route('/bao-cao-bai-test/<int:yb>-<int:mb>-<int:dbb>-<int:y>-<int:m>-<int:d>', methods=['GET', 'POST'])
 @login_required
 def bao_cao_bai_test(yb, mb, dbb, y, m, d):
-    # try:
-    date1 = datetime.strptime(f'{yb}-{mb}-{dbb}', '%Y-%m-%d').date()
-    date2 = datetime.strptime(f'{y}-{m}-{d}', '%Y-%m-%d').date()
+    try:
+        date1 = datetime.strptime(f'{yb}-{mb}-{dbb}', '%Y-%m-%d').date()
+        date2 = datetime.strptime(f'{y}-{m}-{d}', '%Y-%m-%d').date()
 
-    if request.method == 'POST':
-        form_id = request.form.get('form_id')
+        if request.method == 'POST':
+            form_id = request.form.get('form_id')
 
-        if form_id == 'form-date-filter':
-            dateInput1 = request.form.get('dateInput1')
-            dateInput2 = request.form.get('dateInput2')
+            if form_id == 'form-date-filter':
+                dateInput1 = request.form.get('dateInput1')
+                dateInput2 = request.form.get('dateInput2')
 
-            date1 = datetime.strptime(dateInput1, '%Y-%m-%d').date()
-            date2 = datetime.strptime(dateInput2, '%Y-%m-%d').date()
+                date1 = datetime.strptime(dateInput1, '%Y-%m-%d').date()
+                date2 = datetime.strptime(dateInput2, '%Y-%m-%d').date()
 
-            return redirect(url_for(f'views.bao_cao_bai_test', yb=date1.year, mb=date1.month, dbb=date1.day, y=date2.year, m=date2.month, d=date2.day))
+                return redirect(url_for(f'views.bao_cao_bai_test', yb=date1.year, mb=date1.month, dbb=date1.day, y=date2.year, m=date2.month, d=date2.day))
 
-        if form_id == 'form-add':
-            user_id = request.form.get('user_id')
-            link = request.form.get('link')
-            content = request.form.get('content')
-            type = request.form.get('type')
-            budget = request.form.get('budget') if request.form.get('budget') != '' else 0
-            cpm = request.form.get('cpm') if request.form.get('cpm') != '' else 0
-            cpc = request.form.get('cpc') if request.form.get('cpc') != '' else 0
-            ctr = request.form.get('ctr') if request.form.get('ctr') != '' else 0
-            cpa = request.form.get('cpa') if request.form.get('cpa') != '' else 0
-            order = request.form.get('order') if request.form.get('order') != '' else 0
-            review = request.form.get('review')
-            new_post = Post(user_id=user_id, time=date.today(), link=link, content=content,
-                            type=type, budget=budget, cpm=cpm, cpc=cpc, ctr=ctr, cpa=cpa, order=order, review=review)
-            db.session.add(new_post)
-            db.session.commit()
-            flash("Thêm bài test mới thành công!", category='success')
-
-        if form_id == 'form-edit':
-            id = request.form.get('edit-post_id')
-            post = Post.query.get(id)
-            if post:
-                post.link = request.form.get('edit-link')
-                post.content = request.form.get('edit-content')
-                post.type = request.form.get('edit-type')
-                post.budget = request.form.get('edit-budget') if request.form.get('budget') != '' else 0
-                post.cpm = request.form.get('edit-cpm') if request.form.get('cpm') != '' else 0
-                post.cpc = request.form.get('edit-cpc') if request.form.get('cpc') != '' else 0
-                post.ctr = request.form.get('edit-ctr') if request.form.get('ctr') != '' else 0
-                post.cpa = request.form.get('edit-cpa') if request.form.get('cpa') != '' else 0
-                post.order = request.form.get('edit-order') if request.form.get('order') != '' else 0
-                post.review = request.form.get('edit-review')
+            if form_id == 'form-add':
+                user_id = request.form.get('user_id')
+                link = request.form.get('link')
+                content = request.form.get('content')
+                type = request.form.get('type')
+                budget = request.form.get('budget') if request.form.get('budget') != '' else 0
+                cpm = request.form.get('cpm') if request.form.get('cpm') != '' else 0
+                cpc = request.form.get('cpc') if request.form.get('cpc') != '' else 0
+                ctr = request.form.get('ctr') if request.form.get('ctr') != '' else 0
+                cpa = request.form.get('cpa') if request.form.get('cpa') != '' else 0
+                order = request.form.get('order') if request.form.get('order') != '' else 0
+                review = request.form.get('review')
+                new_post = Post(user_id=user_id, time=date.today(), link=link, content=content,
+                                type=type, budget=budget, cpm=cpm, cpc=cpc, ctr=ctr, cpa=cpa, order=order, review=review)
+                db.session.add(new_post)
                 db.session.commit()
-                flash("Chỉnh sửa bài test thành công!", category='success')
+                flash("Thêm bài test mới thành công!", category='success')
 
-    staffs = User.query.all()
-    staff_list = []
-    for staff in staffs:
-        staff_data = {
-            'id': staff.id,
-            'name': staff.name
-        }
-        staff_list.append(staff_data)
-    
-    posts = Post.query.filter(Post.time.between(date1, date2)).all()
-    post_list = []
+            if form_id == 'form-edit':
+                id = request.form.get('edit-post_id')
+                post = Post.query.get(id)
+                if post:
+                    post.link = request.form.get('edit-link')
+                    post.content = request.form.get('edit-content')
+                    post.type = request.form.get('edit-type')
+                    post.budget = request.form.get('edit-budget') if request.form.get('budget') != '' else 0
+                    post.cpm = request.form.get('edit-cpm') if request.form.get('cpm') != '' else 0
+                    post.cpc = request.form.get('edit-cpc') if request.form.get('cpc') != '' else 0
+                    post.ctr = request.form.get('edit-ctr') if request.form.get('ctr') != '' else 0
+                    post.cpa = request.form.get('edit-cpa') if request.form.get('cpa') != '' else 0
+                    post.order = request.form.get('edit-order') if request.form.get('order') != '' else 0
+                    post.review = request.form.get('edit-review')
+                    db.session.commit()
+                    flash("Chỉnh sửa bài test thành công!", category='success')
 
-    for post in posts:
-        post_data = {
-            'id': post.id,
-            'user_id': post.user_id,
-            'time': post.time.strftime("%d/%m/%Y"),
-            'link': post.link,
-            'type': post.type,
-            'content': post.content,
-            'budget': f'{post.budget:,}',
-            'cpm': f'{post.cpm:,}',
-            'cpc': f'{post.cpc:,}',
-            'ctr': round(post.ctr, 2),
-            'cpa': f'{post.cpa:,}',
-            'cpPerCpa': f'{int(round(post.budget/post.cpa, 0) if post.cpa != 0 else 0):,}',
-            'order': f'{post.order:,}',
-            'cpPerOrder': f'{int(round(post.budget/post.order, 0) if post.order != 0 else 0):,}',
-            'review': post.review,
-        }
-        post_list.append(post_data)
+        staffs = User.query.all()
+        staff_list = []
+        for staff in staffs:
+            staff_data = {
+                'id': staff.id,
+                'name': staff.name
+            }
+            staff_list.append(staff_data)
+        
+        posts = Post.query.filter(Post.time.between(date1, date2)).all()
+        post_list = []
 
-    return render_template('bao-cao-bai-test.html', user=current_user, staff_list=staff_list, post_list=post_list, date1=date1, date2=date2)
-    # except:
-    #     return render_template('404.html')
+        for post in posts:
+            post_data = {
+                'id': post.id,
+                'user_id': post.user_id,
+                'time': post.time.strftime("%d/%m/%Y"),
+                'link': post.link,
+                'type': post.type,
+                'content': post.content,
+                'budget': f'{post.budget:,}',
+                'cpm': f'{post.cpm:,}',
+                'cpc': f'{post.cpc:,}',
+                'ctr': round(post.ctr, 2),
+                'cpa': f'{post.cpa:,}',
+                'cpPerCpa': f'{int(round(post.budget/post.cpa, 0) if post.cpa != 0 else 0):,}',
+                'order': f'{post.order:,}',
+                'cpPerOrder': f'{int(round(post.budget/post.order, 0) if post.order != 0 else 0):,}',
+                'review': post.review,
+            }
+            post_list.append(post_data)
+
+        return render_template('bao-cao-bai-test.html', user=current_user, staff_list=staff_list, post_list=post_list, date1=date1, date2=date2)
+    except:
+        return render_template('404.html')
 
 
 @views.route('/post/delete/<int:id>', methods=['POST'])
@@ -356,3 +356,5 @@ def delete_post(id):
         db.session.delete(post)
         db.session.commit()
     return redirect(url_for('views.bao-cao-bai-test'), user=current_user)
+
+
