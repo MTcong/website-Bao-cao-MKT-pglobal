@@ -20,7 +20,7 @@ let table = new DataTable('#dataTable', {
         $('#total-post').html(totalLink.toLocaleString() + " bài test");
         $('#total-budget').html(totalBudget.toLocaleString() + " VND");
         $('#total-order').html(totalOrder.toLocaleString() + " đơn");
-        $('#total-budgetPerOrder').html(totalBudgetPerOrder.toLocaleString() + " VND");
+        $('#total-budgetPerOrder').html(totalBudgetPerOrder.toLocaleString() + " VND / Đơn");
     }
 });
 

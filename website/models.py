@@ -105,9 +105,11 @@ class Day_report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), default=1)
     time = db.Column(db.DateTime)
-    cost = db.Column(db.Integer, default=0)
+    newRevenue = db.Column(db.Integer, default=0)
+    advanceBudget = db.Column(db.Integer, default=0)
+    realBudget = db.Column(db.Integer, default=0)
     phoneNumber = db.Column(db.Integer, default=0)
-    revenue = db.Column(db.Integer, default=0)
+    mess = db.Column(db.Integer, default=0)
 
 
 class Post(db.Model):
@@ -144,3 +146,5 @@ class Post(db.Model):
             )
             db.session.add(post)
         db.session.commit()
+
+
