@@ -75,7 +75,15 @@ menu_item = 'baocao' %} {% set active_page = 'bcbtest' %} {% block content %}
       post.user_id == staff.id %}
       <tr class="table-light">
         <th>{{post.time}}</th>
-        <th>{{staff.name}}</th>
+        <th>
+          <a href="/user/{{staff.id}}">
+            <img
+              src="{{staff.avatar_url}}"
+              class="w-px-40 h-auto rounded-circle me-2"
+            />
+            {{staff.name}}</a
+          >
+        </th>
         <th><a href="{{post.link}}" target="_blank">LINK</a></th>
         <th>{{post.content}}</th>
         <th>{{post.type}}</th>

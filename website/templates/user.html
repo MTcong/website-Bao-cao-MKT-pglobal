@@ -1,26 +1,12 @@
-{% extends "base.html" %} {% block title %}Báo cáo ngày{% endblock %} {% set
-menu_item = 'baocao' %} {% set active_page = 'bcngay' %} {% block content %}
-<h4 class="fw-bold py-3 mb-4">
-  <span class="text-muted fw-light">Báo cáo /</span>
-  Báo cáo ngày
-</h4>
-<div class="d-flex justify-content-end">
-  <button class="btn btn-outline-secondary btn-xs" onclick="lastDay()">
-    <i class="bx bx-chevron-left"></i>
-  </button>
-  <div class="col-xl-2">
-    <input class="form-control" type="date" id="dateInput" value="{{ddate}}" />
-  </div>
-  <button class="btn btn-outline-secondary btn-xs" onclick="nextDay()">
-    <i class="bx bx-chevron-right"></i>
-  </button>
-</div>
+{% extends "base.html" %} {% block title %}Cá nhân{% endblock %} {% set
+menu_item = 'home' %} {% block content %}
+<h4 class="fw-bold py-3 mb-4" id="page-title">{{staff.name}}</h4>
+
 <div class="table-responsive">
-  <h5 class="card-header text-center">Báo cáo ngày {{fdate}}</h5>
   <table id="dataTable1" class="table table-striped">
     <thead>
       <tr>
-        <th>MKT</th>
+        <th>Ngày</th>
         <th>Doanh số bán mới</th>
         <th>Tiền ứng</th>
         <th>Tiền thực chạy</th>
@@ -33,18 +19,9 @@ menu_item = 'baocao' %} {% set active_page = 'bcngay' %} {% block content %}
       </tr>
     </thead>
     <tbody id="body-table" class="table-border-bottom-0">
-      {% for staff in staff_list %} {% for report in report_list %} {% if
-      report.user_id == staff.id %}
+      {% for report in report_list %}
       <tr class="table-light">
-        <th>
-          <a href="/user/{{staff.id}}">
-            <img
-              src="{{staff.avatar_url}}"
-              class="w-px-40 h-auto rounded-circle me-2"
-            />
-            {{staff.name}}</a
-          >
-        </th>
+        <th>{{report.time}}</th>
         <th>{{report.newRevenue}} VND</th>
         <th>{{report.advanceBudget}} VND</th>
         <th>{{report.realBudget}} VND</th>
@@ -55,7 +32,7 @@ menu_item = 'baocao' %} {% set active_page = 'bcngay' %} {% block content %}
         <th>{{report.mess}}</th>
         <th>{{report.bpm}} VND</th>
       </tr>
-      {%endif%} {%endfor%} {%endfor%}
+      {%endfor%}
     </tbody>
     <tfoot>
       <tr>
@@ -73,17 +50,7 @@ menu_item = 'baocao' %} {% set active_page = 'bcngay' %} {% block content %}
     </tfoot>
   </table>
 </div>
-{% if render_table == True %}
-<div class="d-flex justify-content-end">
-  <button
-    data-bs-toggle="modal"
-    data-bs-target="#report"
-    class="btn btn-primary"
-  >
-    Báo cáo
-  </button>
-</div>
-{% endif %} {% endblock %} {% block modal %}
+{% endblock %} {% block modal %}
 <div
   class="modal fade"
   id="report"

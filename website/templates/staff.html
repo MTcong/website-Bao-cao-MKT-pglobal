@@ -66,6 +66,8 @@ menu_item = 'ql' %} {% set active_page = 'staff' %} {% block content %}
         <th>CCCD</th>
         <th>Email</th>
         <th>Ngày sinh</th>
+        <th>Số tài khoản</th>
+        <th>Ngân hàng</th>
         <th>Thao tác</th>
       </tr>
     </thead>
@@ -73,12 +75,22 @@ menu_item = 'ql' %} {% set active_page = 'staff' %} {% block content %}
       {% for staff in staff_list %}
       <tr class="table-light">
         <th>{{staff.id}}</th>
-        <th>{{staff.name}}</th>
+        <th>
+          <a href="/staff/{{staff.id}}">
+            <img
+              src="{{staff.avatar_url}}"
+              class="w-px-40 h-auto rounded-circle me-2"
+            />
+            {{staff.name}}</a
+          >
+        </th>
         <th>{{staff.address}}</th>
         <th>{{staff.phone}}</th>
         <th>{{staff.cccd}}</th>
         <th>{{staff.email}}</th>
         <th>{{staff.dob}}</th>
+        <th>{{staff.stk}}</th>
+        <th>{{staff.bank_shortName}}</th>
         <th>
           <div class="dropdown">
             <button
@@ -142,13 +154,7 @@ menu_item = 'ql' %} {% set active_page = 'staff' %} {% block content %}
         <div class="row">
           <div class="col mb-3">
             <label for="name" class="form-label">Tên nhân viên</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              class="form-control"
-              placeholder="Nhập tên nhân viên..."
-            />
+            <input type="text" id="name" name="name" class="form-control" />
           </div>
         </div>
         <div class="row">
@@ -159,7 +165,6 @@ menu_item = 'ql' %} {% set active_page = 'staff' %} {% block content %}
               id="address"
               name="address"
               class="form-control"
-              placeholder="Nhập địa chỉ của khách hàng..."
             />
           </div>
         </div>
@@ -167,25 +172,12 @@ menu_item = 'ql' %} {% set active_page = 'staff' %} {% block content %}
           <div class="col mb-3">
             <label for="phone" class="form-label">Số điện thoại</label>
             <div class="input-group input-group-merge">
-              <span class="input-group-text">VN (+84)</span>
-              <input
-                type="text"
-                id="phone"
-                name="phone"
-                class="form-control"
-                placeholder="912 345 678"
-              />
+              <input type="text" id="phone" name="phone" class="form-control" />
             </div>
           </div>
           <div class="col mb-3">
             <label for="cccd" class="form-label">Căn cước công dân</label>
-            <input
-              type="text"
-              id="cccd"
-              name="cccd"
-              class="form-control"
-              placeholder="000 000 000 000"
-            />
+            <input type="text" id="cccd" name="cccd" class="form-control" />
           </div>
         </div>
         <div class="row g-2">
@@ -201,13 +193,30 @@ menu_item = 'ql' %} {% set active_page = 'staff' %} {% block content %}
           </div>
           <div class="col mb-3">
             <label for="dob" class="form-label">Ngày sinh</label>
+            <input type="date" id="dob" name="dob" class="form-control" />
+          </div>
+        </div>
+        <div class="row g-2">
+          <div class="col mb-0">
+            <label for="stk" class="form-label">Số tài khoản</label>
+            <input type="text" id="stk" name="stk" class="form-control" />
+          </div>
+          <div class="col mb-0">
+            <label for="bank_id" class="form-label">Ngân hàng</label>
             <input
-              type="date"
-              id="dob"
-              name="dob"
               class="form-control"
-              placeholder="Ngày / Tháng / Năm"
+              list="browsers"
+              name="selected_bank"
+              id="selected_bank"
             />
+            <datalist id="browsers">
+              {% for bank in bank_list %}
+              <option value="{{ bank.shortName }}" data-id="{{ bank.id }}">
+                {{ bank.name }}
+              </option>
+              {% endfor %}
+            </datalist>
+            <input type="hidden" id="bank_id" name="bank_id" />
           </div>
         </div>
       </div>
@@ -271,7 +280,6 @@ menu_item = 'ql' %} {% set active_page = 'staff' %} {% block content %}
               id="edit-name"
               name="edit-name"
               class="form-control"
-              placeholder="Nhập tên nhân viên..."
             />
           </div>
         </div>
@@ -283,7 +291,6 @@ menu_item = 'ql' %} {% set active_page = 'staff' %} {% block content %}
               id="edit-address"
               name="edit-address"
               class="form-control"
-              placeholder="Nhập địa chỉ của khách hàng..."
             />
           </div>
         </div>
@@ -291,13 +298,11 @@ menu_item = 'ql' %} {% set active_page = 'staff' %} {% block content %}
           <div class="col mb-3">
             <label for="edit-phone" class="form-label">Số điện thoại</label>
             <div class="input-group input-group-merge">
-              <span class="input-group-text">VN (+84)</span>
               <input
                 type="text"
                 id="edit-phone"
                 name="edit-phone"
                 class="form-control"
-                placeholder="912 345 678"
               />
             </div>
           </div>
@@ -324,14 +329,41 @@ menu_item = 'ql' %} {% set active_page = 'staff' %} {% block content %}
             />
           </div>
           <div class="col mb-3">
-            <label for="edit-dob" class="form-label">Ngày sinh</label>
+            <label for="dob" class="form-label">Ngày sinh</label>
             <input
               type="date"
               id="edit-dob"
               name="edit-dob"
               class="form-control"
-              placeholder="Ngày / Tháng / Năm"
             />
+          </div>
+        </div>
+        <div class="row g-2">
+          <div class="col mb-0">
+            <label for="stk" class="form-label">Số tài khoản</label>
+            <input
+              type="text"
+              id="edit-stk"
+              name="edit-stk"
+              class="form-control"
+            />
+          </div>
+          <div class="col mb-0">
+            <label for="bank_id" class="form-label">Ngân hàng</label>
+            <input
+              class="form-control"
+              list="edit-browsers"
+              name="edit-selected_bank"
+              id="edit-selected_bank"
+            />
+            <datalist id="edit-browsers">
+              {% for bank in bank_list %}
+              <option value="{{ bank.shortName }}" data-id="{{ bank.id }}">
+                {{ bank.name }}
+              </option>
+              {% endfor %}
+            </datalist>
+            <input type="hidden" id="edit-bank_id" name="edit-bank_id" />
           </div>
         </div>
       </div>

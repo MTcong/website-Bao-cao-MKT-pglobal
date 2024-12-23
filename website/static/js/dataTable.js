@@ -28,18 +28,37 @@ let table = new DataTable('#dataTable', {
 
 
 $('#printButton').on('click', function () {
-    let printWindow = window.open('', '_blank');
     let title = document.querySelector('#page-title').textContent;
-
     let table = document.querySelector('#dataTable');
+
+    let headerTexts = [];
+    let thead = table.querySelector('thead');
+    if (thead) {
+        thead.querySelectorAll('th').forEach(th => {
+            headerTexts.push(th.textContent.trim());
+        });
+    }
+
+    let rowData = [];
+
     table.querySelectorAll('tr').forEach(row => {
+        row.querySelectorAll('td, th').forEach(cell => {
+            let anchor = cell.querySelector('a');
+            if (anchor) {
+                let text = anchor.textContent.trim();
+                cell.innerHTML = text;
+            }
+        });
+
         let lastCell = row.querySelector('td:last-child, th:last-child');
         if (lastCell) {
             lastCell.remove();
         }
     });
+
     let tableHtml = table.outerHTML;
 
+    let printWindow = window.open('', '_blank');
     printWindow.document.write(`
         <html>
         <head>
@@ -64,33 +83,51 @@ $('#printButton').on('click', function () {
 });
 
 
+
 $('#csvButton').click(function () {
     exportTableToCSV('data.csv');
 });
 
 
 function exportTableToCSV(filename) {
+    let table = document.querySelector('#dataTable');
+
     let csv = [];
-    let rows = table.rows({ search: 'applied' }).data();
 
     let headers = [];
-    $('#dataTable thead th').each(function (index) {
-        if (index < $('#dataTable thead th').length - 1) {
-            headers.push($(this).text());
-        }
-    });
-    csv.push(headers.join(","));
+    let thead = table.querySelector('thead');
+    if (thead) {
+        thead.querySelectorAll('th').forEach((th, index) => {
+            if (index < thead.querySelectorAll('th').length - 1) {
+                headers.push(th.textContent.trim());
+            }
+        });
+        csv.push(headers.join(","));
+    }
 
-    rows.each(function (row) {
+    let rows = table.querySelectorAll('tbody tr');
+    rows.forEach(row => {
         let rowData = [];
-        for (let i = 0; i < row.length - 1; i++) {
-            rowData.push(row[i]);
+        row.querySelectorAll('td, th').forEach((cell, index) => {
+            let anchor = cell.querySelector('a');
+            if (anchor) {
+                let text = anchor.textContent.trim();
+                cell.innerHTML = text;
+            }
+
+            if (index < row.querySelectorAll('td, th').length - 1) {
+                rowData.push(cell.textContent.trim());
+            }
+        });
+
+        if (rowData.length > 0 && rowData.join(",") !== headers.join(",")) {
+            csv.push(rowData.join(","));
         }
-        csv.push(rowData.join(","));
     });
 
     let csvString = csv.join("\n");
     let blob = new Blob(["\ufeff" + csvString], { type: 'text/csv;charset=utf-8;' });
+
     let link = document.createElement("a");
     if (link.download !== undefined) {
         let url = URL.createObjectURL(blob);
@@ -104,39 +141,53 @@ function exportTableToCSV(filename) {
 }
 
 
+
 $('#excelButton').click(function () {
     exportTableToExcel('data.xlsx');
 });
 
 
 function exportTableToExcel(filename) {
-    let rows = table.rows({ search: 'applied' }).data();
+    let table = document.querySelector('#dataTable');
 
     let headers = [];
-    $('#dataTable thead th').each(function (index) {
-        if (index < $('#dataTable thead th').length - 1) {
-            headers.push($(this).text());
-        }
-    });
+    let thead = table.querySelector('thead');
+    if (thead) {
+        thead.querySelectorAll('th').forEach((th, index) => {
+            if (index < thead.querySelectorAll('th').length - 1) { // Exclude the last column
+                headers.push(th.textContent.trim());
+            }
+        });
+    }
 
     let data = [];
     data.push(headers);
 
-    rows.each(function (row) {
+    table.querySelectorAll('tbody tr').forEach(row => {
         let rowData = [];
-        for (let i = 0; i < row.length - 1; i++) {
-            rowData.push(row[i]);
+        row.querySelectorAll('td, th').forEach((cell, index) => {
+            let anchor = cell.querySelector('a');
+            if (anchor) {
+                let text = anchor.textContent.trim();
+                cell.innerHTML = text;
+            }
+
+            if (index < row.querySelectorAll('td, th').length - 1) {
+                rowData.push(cell.textContent.trim());
+            }
+        });
+
+        if (rowData.length > 0) {
+            data.push(rowData);
         }
-        data.push(rowData);
     });
 
     let ws = XLSX.utils.aoa_to_sheet(data);
-
     let wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-
     XLSX.writeFile(wb, filename);
 }
+
 
 
 $('#copyButton').click(function () {
@@ -145,32 +196,45 @@ $('#copyButton').click(function () {
 
 
 function copyTableToClipboard() {
-    let rows = table.rows({ search: 'applied' }).data();
+    let table = document.querySelector('#dataTable');
 
     let headers = [];
-    $('#dataTable thead th').each(function (index) {
-        if (index < $('#dataTable thead th').length - 1) {
-            headers.push($(this).text());
-        }
-    });
+    let thead = table.querySelector('thead');
+    if (thead) {
+        thead.querySelectorAll('th').forEach((th, index) => {
+            if (index < thead.querySelectorAll('th').length - 1) {
+                headers.push(th.textContent.trim());
+            }
+        });
+    }
 
     let data = [];
     data.push(headers);
 
-    rows.each(function (row) {
+    let rows = table.querySelectorAll('tbody tr');
+    rows.forEach(row => {
         let rowData = [];
-        for (let i = 0; i < row.length - 1; i++) {
-            rowData.push(row[i]);
+        row.querySelectorAll('td, th').forEach((cell, index) => {
+            let anchor = cell.querySelector('a');
+            let textContent = anchor ? anchor.textContent.trim() : cell.textContent.trim();
+
+            if (index < row.querySelectorAll('td, th').length - 1) {
+                rowData.push(textContent);
+            }
+        });
+
+        if (rowData.length > 0) {
+            data.push(rowData);
         }
-        data.push(rowData);
     });
 
-    let clipboardText = data.map(row => row.join("\t")).join("\n");
 
+    let clipboardText = data.map(row => row.join("\t")).join("\n");
     navigator.clipboard.writeText(clipboardText).then(() => {
         alert("Copy thành công!");
     }).catch(err => {
         console.error("Failed to copy table data: ", err);
     });
 }
+
   

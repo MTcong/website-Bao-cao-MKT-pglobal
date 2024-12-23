@@ -1,11 +1,9 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from os import path
-from flask_login import LoginManager
-from datetime import date
-from werkzeug.security import generate_password_hash
-from faker import Faker
+from flask_login import LoginManager, login_required
 import pytz
+import os
 
 
 TIMEZONE = 'Asia/Ho_Chi_Minh'
@@ -20,6 +18,11 @@ def create_app():
     app = Flask("__name__", template_folder='website/templates', static_folder='website/static')
     app.config['SECRET_KEY'] = 'jfpamcoakr ncldprnkea'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+
+    UPLOAD_FOLDER = 'website/static/sneat/assets/img/avatars'
+    ALLOWED_EXTENSIONS = {'png', 'jpeg', 'jpg', 'gif'}
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
     db.init_app(app)
 
     from .views import views
@@ -53,5 +56,36 @@ def create_app():
     @app.errorhandler(404)
     def page_not_found(e):
         return render_template('404.html'), 404
+
+    def allowed_file(filename):
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+    @app.route('/upload', methods=['POST'])
+    @login_required
+    def upload_file():
+        if 'image' not in request.files:
+            return jsonify({'error': 'No file part in the request'}), 400
+
+        file = request.files['image']
+        user_id = request.form.get('user_id')
+
+        if not user_id:
+            return jsonify({'error': 'Missing user_id in the request'}), 400
+
+        if file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+
+        if not allowed_file(file.filename):
+            return jsonify({'error': 'File type not allowed'}), 400
+
+        # Extract file extension
+        file_extension = file.filename.rsplit('.', 1)[1].lower()
+        
+        # Rename file to user_id.filetype
+        new_filename = f"{user_id}.{file_extension}"
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
+        file.save(filepath)
+
+        return jsonify({'message': 'File uploaded successfully', 'filename': new_filename}), 200
 
     return app

@@ -1,11 +1,12 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
-import json
 from .models import *
 from datetime import *
 from sqlalchemy import or_, and_
 from dateutil.relativedelta import relativedelta
+import re
 
 
 views = Blueprint('views', __name__)
@@ -14,13 +15,82 @@ views = Blueprint('views', __name__)
 @views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
-    return render_template('home.html', user=current_user)
+    return redirect(url_for(f'views.user', id=current_user.id))
 
 
 @views.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    return render_template('profile.html', user=current_user)
+
+    if request.method == 'POST':
+        print(request.form)
+        current_user.avatar_url = request.form.get('avatar_url')
+        current_user.name = request.form.get('name')
+        current_user.cccd = request.form.get('cccd')
+        current_user.email = request.form.get('email')
+        current_user.phone = request.form.get('phone')
+        current_user.address = request.form.get('address')
+        current_user.stk = request.form.get('stk')
+        current_user.bank_id = request.form.get('bank_id')
+
+        dob_str = request.form.get('dob')
+        current_user.dob = datetime.strptime(dob_str, '%Y-%m-%d').date()
+
+        db.session.commit()
+        flash("Chỉnh sửa thông tin thành công!", category='success')
+
+    banks = Bank.query.all()
+    bank_list = []
+    for bank in banks:
+        if current_user.bank_id == bank.id:
+            user_bank_shortName = bank.shortName
+        bank_data = {
+            'id': bank.id,
+            'name': bank.name,
+            'code': bank.code,
+            'bin': bank.bin,
+            'shortName': bank.shortName,
+            'logo': bank.logo,
+            'swift_code': bank.swift_code
+        }
+        bank_list.append(bank_data)
+
+    return render_template('profile.html', user=current_user, bank_list=bank_list, user_bank_shortName=user_bank_shortName)
+
+
+@views.route('/settings', methods=['GET', 'POST'])
+@login_required
+def settings():
+
+    if request.method == 'POST':
+        currentPassword = request.form.get('currentPassword')
+        newPassword = request.form.get('newPassword')
+        confirmPassword = request.form.get('confirmPassword')
+
+        if not check_password_hash(current_user.password, currentPassword):
+            flash('Mật khẩu hiện tại không chính xác!', category='error')
+            return render_template('settings.html', user=current_user)
+        elif len(newPassword) < 8:
+            flash('Mật khẩu mới phải có ít nhất 8 kí tự!', category='error')
+            return render_template('settings.html', user=current_user)
+        elif not bool(re.search(r'\d', newPassword)):
+            flash('Mật khẩu mới phải có ít nhất 1 số!', category='error')
+            return render_template('settings.html', user=current_user)
+        elif not bool(re.search(r'[A-Z]', newPassword)):
+            flash('Mật khẩu mới phải có ít nhất 1 kí tự viết hoa!', category='error')
+            return render_template('settings.html', user=current_user)
+        elif not bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', newPassword)):
+            flash('Mật khẩu mới phải có ít nhất 1 kí tự đặt biệt!', category='error')
+            return render_template('settings.html', user=current_user)
+        elif not newPassword==confirmPassword:
+            flash('Mật khẩu mới phải trùng với mật khẩu xác nhận!', category='error')
+            return render_template('settings.html', user=current_user)
+        else:
+            current_user.password = generate_password_hash(newPassword)
+            db.session.commit()
+            flash('Cập nhập mật khẩu mới thành công!', category='success')
+        
+    return render_template('settings.html', user=current_user)
 
 
 @views.route('/bank', methods=['GET', 'POST'])
@@ -101,15 +171,18 @@ def staff():
             phone = request.form.get('phone')
             cccd = request.form.get('cccd')
             email = request.form.get('email')
-            dob_str = request.form.get('dob')
+            stk = request.form.get('stk')
+            bank_id = request.form.get('bank_id')
 
+            dob_str = request.form.get('dob')
             dob = datetime.strptime(dob_str, '%Y-%m-%d').date()
 
-            new_staff = User(name=name, address=address, phone=phone, cccd=cccd, email=email, dob=dob, role="staff", password=generate_password_hash('A@123456'))
+            new_staff = User(name=name, address=address, phone=phone, cccd=cccd, email=email, dob=dob, role="staff",
+                             password=generate_password_hash('A@123456'), stk=stk, bank_id=bank_id)
 
             db.session.add(new_staff)
             db.session.commit()
-            flash("Thêm nhà cung cấp mới thành công!", category='success')
+            flash("Thêm nhân viên mới thành công!", category='success')
 
         if form_id == 'form-edit':
             id = request.form.get('edit-id')
@@ -121,19 +194,23 @@ def staff():
                 staff.phone = request.form.get('edit-phone')
                 staff.cccd = request.form.get('edit-cccd')
                 staff.email = request.form.get('edit-email')
+                staff.stk = request.form.get('edit-stk')
+                staff.bank_id = request.form.get('edit-bank_id')
 
                 dob_str = request.form.get('edit-dob')
-                
                 staff.dob = datetime.strptime(dob_str, '%Y-%m-%d').date()
 
                 db.session.commit()
-                flash("Chỉnh sửa thông tin nhà cung cấp thành công!", category='success')
+                flash("Chỉnh sửa thông tin nhân viên thành công!", category='success')
             else:
-                flash("Nhà cung cấp không còn tồn tại trên hệ thống.", category='error')
+                flash("Nhân viên không còn tồn tại trên hệ thống.", category='error')
 
     staffs = User.query.filter_by(role='staff').all()
     staff_list = []
     for staff in staffs:
+
+        bank = Bank.query.get(staff.bank_id)
+
         staff_data = {
             'id': staff.id,
             'name': staff.name,
@@ -141,11 +218,26 @@ def staff():
             'phone': staff.phone,
             'address': staff.address,
             'cccd': staff.cccd,
-            'dob': staff.dob.strftime("%d/%m/%Y")
+            'dob': staff.dob.strftime("%d/%m/%Y"),
+            'avatar_url': staff.avatar_url,
+            'stk': staff.stk,
+            'bank_id': staff.bank_id,
+            'bank_shortName': bank.shortName
         }
         staff_list.append(staff_data)
 
-    return render_template('staff.html', user=current_user, staff_list=staff_list)
+    banks = Bank.query.all()
+    bank_list = []
+    for bank in banks:
+        bank_data = {
+            'id': bank.id,
+            'name': bank.name,
+            'code': bank.code,
+            'shortName': bank.shortName,
+        }
+        bank_list.append(bank_data)
+
+    return render_template('staff.html', user=current_user, staff_list=staff_list, bank_list=bank_list)
 
 
 @views.route('/staff/delete/<int:id>', methods=['POST'])
@@ -159,6 +251,69 @@ def delete_staff(id):
     else:
         flash("Nhân viên không còn tồn tại trên hệ thống.", category='error')
     return redirect(url_for('views.staff'), user=current_user)
+
+
+@views.route('/staff/<int:id>', methods=['GET', 'POST'])
+@login_required
+def staff_details(id):
+
+    if request.method == 'POST':
+        form_id = request.form.get('form_id')
+        
+        if form_id == 'form-edit':
+            # id = request.form.get('edit-id')
+            staff = User.query.get(id)
+
+            if staff:
+                staff.name = request.form.get('edit-name')
+                staff.address = request.form.get('edit-address')
+                staff.phone = request.form.get('edit-phone')
+                staff.cccd = request.form.get('edit-cccd')
+                staff.email = request.form.get('edit-email')
+                staff.stk = request.form.get('edit-stk')
+                staff.bank_id = request.form.get('edit-bank_id')
+
+                dob_str = request.form.get('edit-dob')
+                
+                staff.dob = datetime.strptime(dob_str, '%Y-%m-%d').date()
+
+                db.session.commit()
+                flash("Chỉnh sửa thông tin nhà cung cấp thành công!", category='success')
+            else:
+                flash("Nhà cung cấp không còn tồn tại trên hệ thống.", category='error')
+
+    staff = User.query.get(id)
+    if staff:
+        bank = Bank.query.get(staff.bank_id)
+        staff_data = {
+            'id': staff.id,
+            'name': staff.name,
+            'email': staff.email,
+            'phone': staff.phone,
+            'address': staff.address,
+            'cccd': staff.cccd,
+            'dob': staff.dob.strftime("%d/%m/%Y"),
+            'stk': staff.stk,
+            'bank_id': staff.bank_id,
+            'bank_shortName': bank.shortName,
+            'bank_bin': bank.bin
+        }
+
+    banks = Bank.query.all()
+    bank_list = []
+    for bank in banks:
+        bank_data = {
+            'id': bank.id,
+            'name': bank.name,
+            'code': bank.code,
+            'bin': bank.bin,
+            'shortName': bank.shortName,
+            'logo': bank.logo,
+            'swift_code': bank.swift_code
+        }
+        bank_list.append(bank_data)
+
+    return render_template('staffDetails.html', user=current_user, staff=staff_data, bank_list=bank_list)
 
 
 @views.route('/bao-cao-gio', methods=['GET'])
@@ -224,7 +379,8 @@ def bao_cao_gio(y, m, d):
         for staff in staffs:
             staff_data = {
                 'id': staff.id,
-                'name': staff.name
+                'name': staff.name,
+                'avatar_url': staff.avatar_url,
             }
             staff_list.append(staff_data)
         
@@ -298,7 +454,8 @@ def bao_cao_ngay(y, m, d):
     for staff in staffs:
         staff_data = {
             'id': staff.id,
-            'name': staff.name
+            'name': staff.name,
+            'avatar_url': staff.avatar_url,
         }
         staff_list.append(staff_data)
     
@@ -392,7 +549,8 @@ def bao_cao_bai_test(yb, mb, dbb, y, m, d):
         for staff in staffs:
             staff_data = {
                 'id': staff.id,
-                'name': staff.name
+                'name': staff.name,
+                'avatar_url': staff.avatar_url,
             }
             staff_list.append(staff_data)
         
@@ -432,5 +590,35 @@ def delete_post(id):
         db.session.delete(post)
         db.session.commit()
     return redirect(url_for('views.bao-cao-bai-test'), user=current_user)
+
+
+@views.route('/user/<int:id>', methods=['GET', 'POST'])
+@login_required
+def user(id):
+    try:
+        now = datetime.now()
+        staff = User.query.get(id)
+
+        reports = Day_report.query.filter(Day_report.user_id == id, Day_report.time <= now).all()
+        report_list = []
+        for report in reports:
+            report_data = {
+                'id': report.id,
+                'time': report.time.strftime('%d/%m/%Y'),
+                'newRevenue': f'{report.newRevenue:,}',
+                'advanceBudget': f'{report.advanceBudget:,}',
+                'realBudget': f'{report.realBudget:,}',
+                'phoneNumber': f'{report.phoneNumber:,}',
+                'mess': f'{report.mess:,}',
+                'cpp': f'{int(round(report.realBudget/report.phoneNumber, 0) if report.phoneNumber != 0 else 0):,}',
+                'cpr': f'{float(round(report.newRevenue/report.realBudget*100, 2) if report.realBudget != 0 else 0):,}',
+                'ppm': f'{float(round(report.phoneNumber/report.mess*100, 2) if report.mess != 0 else 0):,}',
+                'bpm': f'{int(round(report.realBudget/report.mess, 0) if report.mess != 0 else 0):,}',
+            }
+            report_list.append(report_data)
+
+        return render_template('user.html', user=current_user, staff=staff, report_list=report_list)
+    except:
+        return render_template('404.html')
 
 

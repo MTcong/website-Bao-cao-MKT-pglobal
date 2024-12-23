@@ -114,12 +114,12 @@
 
           <ul class="menu-inner py-1">
             <!-- Trang Chủ -->
-            <li class="menu-item {{'active' if menu_item == 'home' }}">
+            <!-- <li class="menu-item {{'active' if menu_item == 'home' }}">
               <a href="/" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div>Trang Chủ</div>
               </a>
-            </li>
+            </li> -->
 
             <!-- Báo cáo -->
             <li class="menu-item {{'active open' if menu_item == 'baocao' }}">
@@ -139,11 +139,11 @@
                     <div>Báo cáo ngày</div>
                   </a>
                 </li>
-                <li class="menu-item {{'active' if active_page == 'bcthang' }}">
+                <!-- <li class="menu-item {{'active' if active_page == 'bcthang' }}">
                   <a href="/bao-cao-thang" class="menu-link">
                     <div>Báo cáo tháng</div>
                   </a>
-                </li>
+                </li> -->
                 <li class="menu-item {{'active' if active_page == 'bcbtest' }}">
                   <a href="/bao-cao-bai-test" class="menu-link">
                     <div>Báo cáo bài test</div>
@@ -233,7 +233,7 @@
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                      <a class="dropdown-item" href="/profile">
+                      <a class="dropdown-item" href="/user/{{user.id}}">
                         <div class="d-flex">
                           <div class="flex-shrink-0 me-3">
                             <div class="avatar avatar-online">

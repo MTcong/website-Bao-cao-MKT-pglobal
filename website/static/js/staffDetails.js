@@ -30,19 +30,6 @@ function deleteStaff(staffID) {
     });
 }
 
-document.getElementById('selected_bank').addEventListener('change', function() {
-    const selectedValue = this.value;
-    const datalist = document.getElementById('browsers');
-    const options = datalist.options;
-  
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].value === selectedValue) {
-        document.getElementById('bank_id').value = options[i].getAttribute('data-id');
-        return;
-      }
-    }
-});
-
 
 document.getElementById('edit-selected_bank').addEventListener('change', function() {
     const selectedValue = this.value;

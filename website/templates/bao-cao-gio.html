@@ -33,7 +33,15 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
       {% for staff in staff_list %} {% for report in report_list %} {% if
       report.user_id == staff.id and report.time == '1130' %}
       <tr class="table-light">
-        <th>{{staff.name}}</th>
+        <th>
+          <a href="/user/{{staff.id}}">
+            <img
+              src="{{staff.avatar_url}}"
+              class="w-px-40 h-auto rounded-circle me-2"
+            />
+            {{staff.name}}</a
+          >
+        </th>
         <th>{{report.cost}} VND</th>
         <th>{{report.phoneNumber}}</th>
         <th>{{report.costPerPhone}} VND</th>
@@ -85,7 +93,15 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
       {% for staff in staff_list %} {% for report in report_list %} {% if
       report.user_id == staff.id and report.time == '1700' %}
       <tr class="table-light">
-        <th>{{staff.name}}</th>
+        <th>
+          <a href="/user/{{staff.id}}">
+            <img
+              src="{{staff.avatar_url}}"
+              class="w-px-40 h-auto rounded-circle me-2"
+            />
+            {{staff.name}}</a
+          >
+        </th>
         <th>{{report.cost}} VND</th>
         <th>{{report.phoneNumber}}</th>
         <th>{{report.costPerPhone}} VND</th>
