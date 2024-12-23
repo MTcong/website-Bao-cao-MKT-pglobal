@@ -471,7 +471,7 @@ def bao_cao_ngay(y, m, d):
             'phoneNumber': f'{report.phoneNumber:,}',
             'mess': f'{report.mess:,}',
             'cpp': f'{int(round(report.realBudget/report.phoneNumber, 0) if report.phoneNumber != 0 else 0):,}',
-            'cpr': f'{float(round(report.newRevenue/report.realBudget*100, 2) if report.realBudget != 0 else 0):,}',
+            'cpr': f'{float(round(report.advanceBudget/report.newRevenue*100, 2) if report.newRevenue != 0 else 0):,}',
             'ppm': f'{float(round(report.phoneNumber/report.mess*100, 2) if report.mess != 0 else 0):,}',
             'bpm': f'{int(round(report.realBudget/report.mess, 0) if report.mess != 0 else 0):,}',
         }
