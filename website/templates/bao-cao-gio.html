@@ -168,6 +168,8 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
           class="form-control"
           value="{{user.id}}"
         />
+        {% for report in report_list %} {% if report.user_id == user.id and
+        report.time == '1130' %}
         <div class="row">
           <div class="col mb-3">
             <label class="form-label">Chi phí</label>
@@ -178,6 +180,7 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
                 name="cost"
                 class="form-control"
                 min="0"
+                value="{{report.cost.replace(',', '')}}"
               />
               <span class="input-group-text">VND</span>
             </div>
@@ -193,6 +196,7 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
                 name="phoneNumber"
                 class="form-control"
                 min="0"
+                value="{{report.phoneNumber}}"
               />
             </div>
           </div>
@@ -207,11 +211,13 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
                 name="revenue"
                 class="form-control"
                 min="0"
+                value="{{report.revenue.replace(',', '')}}"
               />
               <span class="input-group-text">VND</span>
             </div>
           </div>
         </div>
+        {%endif%} {%endfor%}
       </div>
       <div class="modal-footer">
         <button
@@ -262,6 +268,8 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
           class="form-control"
           value="{{user.id}}"
         />
+        {% for report in report_list %} {% if report.user_id == user.id and
+        report.time == '1700' %}
         <div class="row">
           <div class="col mb-3">
             <label class="form-label">Chi phí</label>
@@ -272,6 +280,7 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
                 name="cost"
                 class="form-control"
                 min="0"
+                value="{{report.cost.replace(',', '')}}"
               />
               <span class="input-group-text">VND</span>
             </div>
@@ -287,6 +296,7 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
                 name="phoneNumber"
                 class="form-control"
                 min="0"
+                value="{{report.phoneNumber}}"
               />
             </div>
           </div>
@@ -301,11 +311,13 @@ menu_item = 'baocao' %} {% set active_page = 'bcgio' %} {% block content %}
                 name="revenue"
                 class="form-control"
                 min="0"
+                value="{{report.revenue.replace(',', '')}}"
               />
               <span class="input-group-text">VND</span>
             </div>
           </div>
         </div>
+        {%endif%} {%endfor%}
       </div>
       <div class="modal-footer">
         <button

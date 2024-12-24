@@ -20,7 +20,7 @@ let table1 = new DataTable('#dataTable1', {
         });
 
         let totalCPP = parseInt(totalRealBudget / totalPhone) || 0;
-        let totalCPR = (parseFloat(totalNewRevenue / totalRealBudget * 100) || 0).toFixed(2);
+        let totalCPR = (parseFloat(totalAdvanceBudget / totalNewRevenue * 100) || 0).toFixed(2);
         let totalPPM = (parseFloat(totalPhone / totalMess * 100) || 0).toFixed(2);
         let totalBPM = parseInt(totalRealBudget / totalMess) || 0;
 

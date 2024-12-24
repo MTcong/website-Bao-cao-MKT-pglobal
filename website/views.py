@@ -422,70 +422,70 @@ def bcngay():
 @views.route('/bao-cao-ngay/<int:y>-<int:m>-<int:d>', methods=['GET', 'POST'])
 @login_required
 def bao_cao_ngay(y, m, d):
-    # try:
-    now = datetime.now()
-    yesterday = now - timedelta(days=1)
-    ddate = datetime.strptime(f'{y}-{m}-{d}', '%Y-%m-%d').date()
-    time_1000 = datetime.combine(ddate, datetime.min.time()).replace(hour=10, minute=10, second=0, microsecond=0)
+    try:
+        now = datetime.now()
+        yesterday = now - timedelta(days=1)
+        ddate = datetime.strptime(f'{y}-{m}-{d}', '%Y-%m-%d').date()
+        time_1000 = datetime.combine(ddate, datetime.min.time()).replace(hour=10, minute=10, second=0, microsecond=0)
 
-    if yesterday > time_1000:
-        render_table = False
-    else:
-        render_table = True
-
-    staffs = User.query.all()
-    for staff in staffs:
-        if Day_report.query.filter_by(user_id=staff.id, time=time_1000).all():
-            continue
+        if yesterday > time_1000:
+            render_table = False
         else:
-            user_id = staff.id
-            new_report = Day_report(user_id=user_id, time=time_1000)
-            db.session.add(new_report)
-            db.session.commit()
+            render_table = True
 
-    if request.method == 'POST':
-        user_id = request.form.get('user_id')
-        report = Day_report.query.filter_by(user_id=user_id, time=time_1000).first()
-        if report:
-            report.newRevenue = request.form.get('newRevenue')
-            report.advanceBudget = request.form.get('advanceBudget')
-            report.realBudget = request.form.get('realBudget')
-            report.phoneNumber = request.form.get('phoneNumber')
-            report.mess = request.form.get('mess')
-            db.session.commit()
-        flash("Báo cáo thành công!", category='success')
+        staffs = User.query.all()
+        for staff in staffs:
+            if Day_report.query.filter_by(user_id=staff.id, time=time_1000).all():
+                continue
+            else:
+                user_id = staff.id
+                new_report = Day_report(user_id=user_id, time=time_1000)
+                db.session.add(new_report)
+                db.session.commit()
 
-    staffs = User.query.all()
-    staff_list = []
-    for staff in staffs:
-        staff_data = {
-            'id': staff.id,
-            'name': staff.name,
-            'avatar_url': staff.avatar_url,
-        }
-        staff_list.append(staff_data)
-    
-    reports = Day_report.query.filter_by(time=time_1000).all()
-    report_list = []
+        if request.method == 'POST':
+            user_id = request.form.get('user_id')
+            report = Day_report.query.filter_by(user_id=user_id, time=time_1000).first()
+            if report:
+                report.newRevenue = request.form.get('newRevenue')
+                report.advanceBudget = request.form.get('advanceBudget')
+                report.realBudget = request.form.get('realBudget')
+                report.phoneNumber = request.form.get('phoneNumber')
+                report.mess = request.form.get('mess')
+                db.session.commit()
+            flash("Báo cáo thành công!", category='success')
 
-    for report in reports:
-        report_data = {
-            'user_id': report.user_id,
-            'newRevenue': f'{report.newRevenue:,}',
-            'advanceBudget': f'{report.advanceBudget:,}',
-            'realBudget': f'{report.realBudget:,}',
-            'phoneNumber': f'{report.phoneNumber:,}',
-            'mess': f'{report.mess:,}',
-            'cpp': f'{int(round(report.realBudget/report.phoneNumber, 0) if report.phoneNumber != 0 else 0):,}',
-            'cpr': f'{float(round(report.advanceBudget/report.newRevenue*100, 2) if report.newRevenue != 0 else 0):,}',
-            'ppm': f'{float(round(report.phoneNumber/report.mess*100, 2) if report.mess != 0 else 0):,}',
-            'bpm': f'{int(round(report.realBudget/report.mess, 0) if report.mess != 0 else 0):,}',
-        }
-        report_list.append(report_data)
+        staffs = User.query.all()
+        staff_list = []
+        for staff in staffs:
+            staff_data = {
+                'id': staff.id,
+                'name': staff.name,
+                'avatar_url': staff.avatar_url,
+            }
+            staff_list.append(staff_data)
+        
+        reports = Day_report.query.filter_by(time=time_1000).all()
+        report_list = []
 
-    return render_template('bao-cao-ngay.html', user=current_user, staff_list=staff_list, report_list=report_list, ddate=ddate, fdate=f'{d}/{m}/{y}', render_table=render_table)
-    # except:
-    #     return render_template('404.html')
+        for report in reports:
+            report_data = {
+                'user_id': report.user_id,
+                'newRevenue': f'{report.newRevenue:,}',
+                'advanceBudget': f'{report.advanceBudget:,}',
+                'realBudget': f'{report.realBudget:,}',
+                'phoneNumber': f'{report.phoneNumber:,}',
+                'mess': f'{report.mess:,}',
+                'cpp': f'{int(round(report.realBudget/report.phoneNumber, 0) if report.phoneNumber != 0 else 0):,}',
+                'cpr': f'{float(round(report.advanceBudget/report.newRevenue*100, 2) if report.newRevenue != 0 else 0):,}',
+                'ppm': f'{float(round(report.phoneNumber/report.mess*100, 2) if report.mess != 0 else 0):,}',
+                'bpm': f'{int(round(report.realBudget/report.mess, 0) if report.mess != 0 else 0):,}',
+            }
+            report_list.append(report_data)
+
+        return render_template('bao-cao-ngay.html', user=current_user, staff_list=staff_list, report_list=report_list, ddate=ddate, fdate=f'{d}/{m}/{y}', render_table=render_table)
+    except:
+        return render_template('404.html')
 
 
 @views.route('/bao-cao-bai-test', methods=['GET'])

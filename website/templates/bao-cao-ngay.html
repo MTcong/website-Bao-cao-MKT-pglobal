@@ -105,6 +105,7 @@ menu_item = 'baocao' %} {% set active_page = 'bcngay' %} {% block content %}
         ></button>
       </div>
       <div class="modal-body">
+        {% for report in report_list %} {% if report.user_id == user.id %}
         <input
           type="hidden"
           name="user_id"
@@ -121,6 +122,7 @@ menu_item = 'baocao' %} {% set active_page = 'bcngay' %} {% block content %}
                 name="newRevenue"
                 class="form-control"
                 min="0"
+                value="{{report.newRevenue.replace(',', '')}}"
               />
               <span class="input-group-text">VND</span>
             </div>
@@ -136,6 +138,7 @@ menu_item = 'baocao' %} {% set active_page = 'bcngay' %} {% block content %}
                 name="advanceBudget"
                 class="form-control"
                 min="0"
+                value="{{report.advanceBudget.replace(',', '')}}"
               />
               <span class="input-group-text">VND</span>
             </div>
@@ -151,6 +154,7 @@ menu_item = 'baocao' %} {% set active_page = 'bcngay' %} {% block content %}
                 name="realBudget"
                 class="form-control"
                 min="0"
+                value="{{report.realBudget.replace(',', '')}}"
               />
               <span class="input-group-text">VND</span>
             </div>
@@ -166,6 +170,7 @@ menu_item = 'baocao' %} {% set active_page = 'bcngay' %} {% block content %}
                 name="phoneNumber"
                 class="form-control"
                 min="0"
+                value="{{report.phoneNumber}}"
               />
             </div>
           </div>
@@ -180,10 +185,12 @@ menu_item = 'baocao' %} {% set active_page = 'bcngay' %} {% block content %}
                 name="mess"
                 class="form-control"
                 min="0"
+                value="{{report.mess}}"
               />
             </div>
           </div>
         </div>
+        {%endif%} {%endfor%}
       </div>
       <div class="modal-footer">
         <button
