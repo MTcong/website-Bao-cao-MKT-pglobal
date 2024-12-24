@@ -488,6 +488,81 @@ def bao_cao_ngay(y, m, d):
         return render_template('404.html')
 
 
+@views.route('/bao-cao-tong', methods=['GET'])
+@login_required
+def bctong():
+    today = date.today()
+    one_month_before = today - relativedelta(months=1)
+    return redirect(url_for(f'views.bao_cao_tong', yb=one_month_before.year, mb=one_month_before.month, dbb=one_month_before.day, y=today.year, m=today.month, d=today.day))
+
+
+@views.route('/bao-cao-tong/<int:yb>-<int:mb>-<int:dbb>-<int:y>-<int:m>-<int:d>', methods=['GET', 'POST'])
+@login_required
+def bao_cao_tong(yb, mb, dbb, y, m, d):
+    try:
+
+        if request.method == 'POST':
+            form_id = request.form.get('form_id')
+
+            if form_id == 'form-date-filter':
+                dateInput1 = request.form.get('dateInput1')
+                dateInput2 = request.form.get('dateInput2')
+
+                date1 = datetime.strptime(dateInput1, '%Y-%m-%d').date()
+                date2 = datetime.strptime(dateInput2, '%Y-%m-%d').date()
+
+                return redirect(url_for(f'views.bao_cao_tong', yb=date1.year, mb=date1.month, dbb=date1.day, y=date2.year, m=date2.month, d=date2.day))
+
+        date1 = datetime.strptime(f'{yb}-{mb}-{dbb}', '%Y-%m-%d').date()
+        date2 = datetime.strptime(f'{y}-{m}-{d}', '%Y-%m-%d').date()
+
+        time1 = datetime.combine(date1, time(0, 0, 0))
+        time2 = datetime.combine(date2, time(23, 59, 59))
+
+        staffs = User.query.all()
+        staff_list = []
+        for staff in staffs:
+
+            newRevenue = 0
+            advanceBudget = 0
+            realBudget = 0
+            phoneNumber = 0
+            mess = 0
+
+            reports = Day_report.query.filter(Day_report.time.between(time1, time2), Day_report.user_id==staff.id).all()
+            for report in reports:
+                newRevenue += report.newRevenue
+                advanceBudget += report.advanceBudget
+                realBudget += report.realBudget
+                phoneNumber += report.phoneNumber
+                mess += report.mess
+
+            staff_data = {
+                'id': staff.id,
+                'name': staff.name,
+                'avatar_url': staff.avatar_url,
+                'newRevenue': f'{newRevenue:,}',
+                'advanceBudget': f'{advanceBudget:,}',
+                'realBudget': f'{realBudget:,}',
+                'phoneNumber': f'{phoneNumber:,}',
+                'mess': f'{mess:,}',
+                'cpp': f'{int(round(report.realBudget/report.phoneNumber, 0) if report.phoneNumber != 0 else 0):,}',
+                'cpr': f'{float(round(report.advanceBudget/report.newRevenue*100, 2) if report.newRevenue != 0 else 0):,}',
+                'ppm': f'{float(round(report.phoneNumber/report.mess*100, 2) if report.mess != 0 else 0):,}',
+                'bpm': f'{int(round(report.realBudget/report.mess, 0) if report.mess != 0 else 0):,}',
+            }
+
+            if staff.id == 1:
+                print(staff_data)
+                print(reports)
+
+            staff_list.append(staff_data) 
+
+        return render_template('bao-cao-tong.html', user=current_user, staff_list=staff_list, date1=date1, date2=date2)
+    except:
+        return render_template('404.html')
+
+
 @views.route('/bao-cao-bai-test', methods=['GET'])
 @login_required
 def bcbtest():
