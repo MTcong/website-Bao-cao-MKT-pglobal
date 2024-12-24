@@ -166,23 +166,29 @@ def staff():
         form_id = request.form.get('form_id')
 
         if form_id == 'form-add':
-            name = request.form.get('name')
-            address = request.form.get('address')
-            phone = request.form.get('phone')
-            cccd = request.form.get('cccd')
-            email = request.form.get('email')
-            stk = request.form.get('stk')
-            bank_id = request.form.get('bank_id')
 
-            dob_str = request.form.get('dob')
-            dob = datetime.strptime(dob_str, '%Y-%m-%d').date()
+            if request.form.get('email') == '':
+                flash("Email không được để trống!", category='error')
+            else:
+                name = request.form.get('name')
+                address = request.form.get('address')
+                phone = request.form.get('phone')
+                cccd = request.form.get('cccd')
+                email = request.form.get('email')
+                stk = request.form.get('stk')
+                bank_id = request.form.get('bank_id')
 
-            new_staff = User(name=name, address=address, phone=phone, cccd=cccd, email=email, dob=dob, role="staff",
-                             password=generate_password_hash('A@123456'), stk=stk, bank_id=bank_id)
+                dob_str = request.form.get('dob') 
+                dob = datetime.strptime(dob_str, '%Y-%m-%d').date() if dob_str != '' else datetime.strptime("2001-01-01", '%Y-%m-%d').date()
 
-            db.session.add(new_staff)
-            db.session.commit()
-            flash("Thêm nhân viên mới thành công!", category='success')
+                bankId = bank_id if bank_id != '' else 1;
+
+                new_staff = User(name=name, address=address, phone=phone, cccd=cccd, email=email, dob=dob, role="staff",
+                                password=generate_password_hash('A@123456'), stk=stk, bank_id=bankId)
+
+                db.session.add(new_staff)
+                db.session.commit()
+                flash("Thêm nhân viên mới thành công!", category='success')
 
         if form_id == 'form-edit':
             id = request.form.get('edit-id')

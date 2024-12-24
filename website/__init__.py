@@ -2,12 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager, login_required
-import pytz
 import os
-
-
-TIMEZONE = 'Asia/Ho_Chi_Minh'
-tz = pytz.timezone(TIMEZONE)
 
 
 db = SQLAlchemy()
